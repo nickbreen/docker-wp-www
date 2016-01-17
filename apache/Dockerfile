@@ -1,38 +1,41 @@
-FROM php:5.6-apache
-# Also see https://github.com/docker-library/wordpress
+FROM phusion/baseimage:0.9.18
 
 MAINTAINER Nick Breen <nick@foobar.net.nz>
 
-# Install New Relic support
-RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
+# Install, Apache, PHP, and New Relic support
+RUN DEBIAN_FRONTEND=noninteractive \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
     && curl -sSfL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
-    && apt-get update -q \
-    && apt-get install -qy \
-        libjpeg-dev \
-        libpng12-dev \
-        newrelic-php5 \
-    && apt-get clean
-
-# Enable the PHP opcache extension
-RUN docker-php-ext-enable opcache \
-    && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install mysqli
+    && apt-get update -qqy \
+    && apt-get install -qqy \
+      apache2 \
+      apache2-utils \
+      libapache2-mod-php5 \
+      newrelic-php5 \
+      php-http \
+      php5-curl \
+      php5-imagick \
+      php5-json \
+      php5-mysql \
+      php5-oauth \
+    && apt-get clean -qqy
 
 ENV NR_INSTALL_SILENT=true \
     NR_INSTALL_KEY="" \
-    NR_APP_NAME="${WP_URL}"
+    NR_APP_NAME=""
 
-# Add entrypoint, to install newrelic
-COPY entrypoint.sh /
+# Install newrelic's configuration
+COPY rc.local /etc/rc.local
 
-# Configure mod_rewrite, mod_cache, mod_php
-# Test the configuration
-COPY wp.conf /etc/apache2/conf-available/
+# Configure a service entry for Apache
+RUN mkdir /etc/service/apache/
+COPY run /etc/service/apache/run
+
+# Configure and test the Apache and PHP configurations
+RUN php5enmod curl imagick json mysql oauth opcache
+COPY wp.conf /etc/apache2/sites-available/
 RUN a2enmod dir cache_disk expires \
-    && a2enconf wp \
-    && apache2ctl -t
+  && a2dissite 000-default \
+  && a2ensite wp
 
-# Apparently, have to reset the entrypoint and command
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["apache2-foreground"]
+RUN /etc/service/apache/run -t 2>&1 && /etc/service/apache/run -S

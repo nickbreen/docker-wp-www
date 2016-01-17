@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ -f /etc/apache2/envvars ] && . /etc/apache2/envvars
+
+exec apache2 -e info -DNO_DETACH -DFOREGROUND -C "ServerName $(hostname)" "${@}"
