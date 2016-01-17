@@ -1,38 +1,35 @@
-FROM php:5.6-fpm
-# Also see https://github.com/docker-library/wordpress
+FROM phusion/baseimage:0.9.18
 
 MAINTAINER Nick Breen <nick@foobar.net.nz>
 
-# Install New Relic support
-RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
+RUN DEBIAN_FRONTEND=noninteractive \
+    && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
     && curl -sSfL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
-    && apt-get update -q \
-    && apt-get install -qy \
-        libjpeg-dev \
-        libpng12-dev \
-        newrelic-php5 \
-    && apt-get clean
+    && apt-get update -qqy \
+    && apt-get install -qqy \
+      newrelic-php5 \
+      php-http \
+      php5-fpm \
+      php5-curl \
+      php5-imagick \
+      php5-json \
+      php5-mysql \
+      php5-oauth \
+    && apt-get clean -qqy
 
-# Install [a] Docker PHP PECL install script
-# Enable the PHP opcache extension
-# Install the PECL OAuth extension
-RUN docker-php-ext-enable opcache \
-    && docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-    && docker-php-ext-install gd \
-    && docker-php-ext-install mysqli
+ENV NR_INSTALL_KEY="" NR_APP_NAME=""
 
-ENV NR_INSTALL_SILENT=true \
-    NR_INSTALL_KEY="" \
-    NR_APP_NAME="${WP_URL}"
+# Configure a service entry for Apache
+RUN mkdir /etc/service/php-fpm/
+COPY run /etc/service/php-fpm/run
 
-# Add entrypoint, to install newrelic
-COPY entrypoint.sh /
+# Configure and test the PHP configurations
+RUN php5enmod curl imagick json mysql oauth opcache
 
-# Configure mod_rewrite, mod_cache, mod_php
-COPY tweaks.ini /usr/local/php/conf.d/
+COPY tweaks.ini /etc/php5/mods-available/
+COPY www.conf /etc/php5/fpm/pool.d/
+RUN php5enmod tweaks
 # Test the Configuration
-RUN php -i > /dev/null
+RUN /etc/service/php-fpm/run -t 2>&1
 
-# Apparently, have to reset the entrypoint and command
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["php-fpm"]
+EXPOSE 9000

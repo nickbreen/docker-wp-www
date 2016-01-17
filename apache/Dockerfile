@@ -2,7 +2,6 @@ FROM phusion/baseimage:0.9.18
 
 MAINTAINER Nick Breen <nick@foobar.net.nz>
 
-# Install, Apache, PHP, and New Relic support
 RUN DEBIAN_FRONTEND=noninteractive \
     && echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | tee /etc/apt/sources.list.d/newrelic.list \
     && curl -sSfL https://download.newrelic.com/548C16BF.gpg | apt-key add - \
@@ -20,12 +19,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
       php5-oauth \
     && apt-get clean -qqy
 
-ENV NR_INSTALL_SILENT=true \
-    NR_INSTALL_KEY="" \
-    NR_APP_NAME=""
-
-# Install newrelic's configuration
-COPY rc.local /etc/rc.local
+ENV NR_INSTALL_KEY="" NR_APP_NAME=""
 
 # Configure a service entry for Apache
 RUN mkdir /etc/service/apache/
@@ -38,4 +32,8 @@ RUN a2enmod dir cache_disk expires \
   && a2dissite 000-default \
   && a2ensite wp
 
-RUN /etc/service/apache/run -t 2>&1 && /etc/service/apache/run -S
+COPY tweaks.ini /etc/php5/mods-available/
+RUN php5enmod tweaks
+RUN /etc/service/apache/run -t 2>&1
+
+EXPOSE 80

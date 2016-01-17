@@ -1,13 +1,24 @@
 apache:
   image: nickbreen/wp-php:apache
+  ports:
+    - 8080:80
   environment:
-    VIRTUAL_HOST: "apache.example.com"
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
 
 fpm:
   image: nickbreen/wp-php:fpm
+  volumes:
+    - /var/www/html
   environment:
-    VIRTUAL_HOST: "fpm.example.com"
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
+
+www:
+  image: nickbreen/lighttpd
+  ports:
+    - 8000:80
+  links:
+    - fpm:fastcgi
+  volumes_from:
+    - fpm

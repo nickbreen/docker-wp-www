@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /etc/container_environment.sh
+
+exec php5-fpm -F "${@}"
