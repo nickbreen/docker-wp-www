@@ -29,6 +29,7 @@ COPY run /etc/service/apache/run
 RUN php5enmod curl imagick json mysql oauth opcache
 COPY wp.conf /etc/apache2/sites-available/
 RUN a2enmod dir cache_disk expires \
+  && a2dismod autoindex \
   && a2dissite 000-default \
   && a2ensite wp
 

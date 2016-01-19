@@ -1,7 +1,9 @@
 apache:
   image: nickbreen/wp-php:apache
   ports:
-    - 8080:80
+    - 8000:80
+  volumes:
+    - .:/var/www
   environment:
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
@@ -9,7 +11,7 @@ apache:
 fpm:
   image: nickbreen/wp-php:fpm
   volumes:
-    - /var/www/html
+    - .:/var/www
   environment:
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
@@ -17,7 +19,7 @@ fpm:
 www:
   image: nickbreen/lighttpd
   ports:
-    - 8000:80
+    - 9000:80
   links:
     - fpm:fastcgi
   volumes_from:
