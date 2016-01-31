@@ -25,13 +25,15 @@ ENV NR_INSTALL_KEY="" NR_APP_NAME=""
 RUN mkdir /etc/service/apache/
 COPY run /etc/service/apache/run
 
+# Enable the cron based htcache cleanup
+RUN sed -i /HTCACHECLEAN_MODE/s/daemon/cron/ /etc/default/apache2
+
 # Configure and test the Apache and PHP configurations
 RUN php5enmod curl imagick json mysql oauth opcache
-COPY wp.conf /etc/apache2/sites-available/
-RUN a2enmod dir cache_disk expires \
-  && a2dismod autoindex \
-  && a2dissite 000-default \
-  && a2ensite wp
+#COPY default.conf /etc/apache2/sites-available/000-default.conf
+COPY proxy.conf /etc/apache2/sites-available/000-default.conf
+RUN a2enmod cache_disk dir expires headers setenvif proxy_http\
+  && a2dismod autoindex
 
 COPY tweaks.ini /etc/php5/mods-available/
 RUN php5enmod tweaks
