@@ -9,7 +9,7 @@ apache:
   environment:
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
-    VIRTUAL_HOST: "*/*/apache,https://*/*/apache"
+    VIRTUAL_HOST: "*,https://*"
 
 fpm:
   # image: nickbreen/wp-php:fpm
@@ -35,7 +35,7 @@ www:
 haproxy:
   image: dockercloud/haproxy:1.2.1
   links:
-    - www
+#    - www
     - apache
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
@@ -45,7 +45,8 @@ haproxy:
     - "1936:1936"
   environment:
     STATS_AUTH: stats:stats
-    DEFAULT_SSL_CERT: |
+    EXTRA_SSL_CERTS: SELF_SSL_CERT
+    SELF_SSL_CERT: |
       -----BEGIN PRIVATE KEY-----
       MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDeVQYXF+A1Sc4j
       C+RRUkac5IFLAB99FqBV1QToAc1G31PWYRAotQXbSb/LI1z/9tLtNV1onjwgZTLY
