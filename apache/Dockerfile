@@ -30,10 +30,13 @@ RUN sed -i /HTCACHECLEAN_MODE/s/daemon/cron/ /etc/default/apache2
 
 # Configure and test the Apache and PHP configurations
 RUN php5enmod curl imagick json mysql oauth opcache
-#COPY default.conf /etc/apache2/sites-available/000-default.conf
-COPY proxy.conf /etc/apache2/sites-available/000-default.conf
-RUN a2enmod cache_disk dir headers setenvif proxy_http\
-  && a2dismod autoindex
+RUN a2enmod cache_disk dir expires headers setenvif proxy_http && a2dismod autoindex
+
+COPY log.conf /etc/apache2/conf-available/log.conf
+COPY proxy.conf /etc/apache2/sites-available/001-proxy.conf
+COPY cache.conf /etc/apache2/sites-available/002-cache.conf
+
+RUN a2enconf log && a2ensite 001-proxy 002-cache && a2dissite 000-default
 
 COPY tweaks.ini /etc/php5/mods-available/
 RUN php5enmod tweaks
