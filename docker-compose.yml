@@ -9,7 +9,11 @@ apache:
   environment:
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
-    VIRTUAL_HOST: "*,https://*"
+    EXTRA_SETTINGS: >
+      acl https dst_port 443,
+      reqdel X-Forwarded-Proto,
+      reqadd X-Forwarded-Proto:\ http unless https,
+      reqadd X-Forwarded-Proto:\ https if https,
 
 fpm:
   # image: nickbreen/wp-php:fpm
@@ -20,6 +24,11 @@ fpm:
   environment:
     NR_APP_NAME: "example-app"
     NR_INSTALL_KEY: example-key
+    EXTRA_SETTINGS: >
+      acl https dst_port 443,
+      reqdel X-Forwarded-Proto,
+      reqadd X-Forwarded-Proto:\ http unless https,
+      reqadd X-Forwarded-Proto:\ https if https,
 
 www:
   image: nickbreen/lighttpd
@@ -30,10 +39,14 @@ www:
   volumes_from:
     - fpm
   environment:
-    VIRTUAL_HOST: "*/*/fpm,https://*/*/fpm"
+    EXTRA_SETTINGS: >
+      acl https dst_port 443,
+      reqdel X-Forwarded-Proto,
+      reqadd X-Forwarded-Proto:\ http unless https,
+      reqadd X-Forwarded-Proto:\ https if https,
 
 haproxy:
-  image: dockercloud/haproxy:1.2.1
+  image: dockercloud/haproxy:1.3
   links:
 #    - www
     - apache
@@ -45,8 +58,8 @@ haproxy:
     - "1936:1936"
   environment:
     STATS_AUTH: stats:stats
-    EXTRA_SSL_CERTS: SELF_SSL_CERT
-    SELF_SSL_CERT: |
+    XCERT_FOLDER: /certs/
+    DEFAULT_SSL_CERT: |
       -----BEGIN PRIVATE KEY-----
       MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDeVQYXF+A1Sc4j
       C+RRUkac5IFLAB99FqBV1QToAc1G31PWYRAotQXbSb/LI1z/9tLtNV1onjwgZTLY
