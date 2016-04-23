@@ -39,4 +39,7 @@ COPY tweaks.ini /etc/php5/mods-available/
 RUN php5enmod tweaks
 RUN /etc/service/apache/run -t 2>&1
 
+# Define the cache dir as a volume
+VOLUME /var/cache/apache2/mod_cache_disk
+
 EXPOSE 80
