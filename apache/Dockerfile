@@ -32,7 +32,7 @@ RUN sed -i /HTCACHECLEAN_MODE/s/daemon/cron/ /etc/default/apache2
 RUN php5enmod curl imagick json mysql oauth opcache
 #COPY default.conf /etc/apache2/sites-available/000-default.conf
 COPY proxy.conf /etc/apache2/sites-available/000-default.conf
-RUN a2enmod cache_disk dir expires headers setenvif proxy_http\
+RUN a2enmod cache_disk dir headers setenvif proxy_http\
   && a2dismod autoindex
 
 COPY tweaks.ini /etc/php5/mods-available/
