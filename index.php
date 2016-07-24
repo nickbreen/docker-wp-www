@@ -15,7 +15,3 @@ foreach ($_SERVER as $h => $v)
     echo "<tr><td>$h<td>$v\n";
 ?>
 </table>
-
-<?php /*
-<img src="data:image/jpg;base64,<?php echo base64_encode(file_get_contents('bacon.jpg'));?>"/>
-*/ ?>
