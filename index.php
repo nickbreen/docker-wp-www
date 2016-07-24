@@ -6,6 +6,7 @@ if ('https' == $_SERVER['HTTP_X_FORWARDED_PROTO'])
 header('Cache-Control: max-age=5, s-maxage=13');
 header("Expires: " . gmdate("D, d M Y H:i:s e", time() + 30) );
 ?>
+
 <a href="/">/</a>
 <table>
 <?php
@@ -15,4 +16,6 @@ foreach ($_SERVER as $h => $v)
 ?>
 </table>
 
+<?php /*
 <img src="data:image/jpg;base64,<?php echo base64_encode(file_get_contents('bacon.jpg'));?>"/>
+*/ ?>
