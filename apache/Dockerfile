@@ -11,6 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
       apache2-utils \
       libapache2-mod-php5 \
       newrelic-php5 \
+      php-gd \
       php-http \
       php5-curl \
       php5-imagick \
