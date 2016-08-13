@@ -12,6 +12,9 @@ RUN mkdir /etc/service/php-fpm/
 COPY run /etc/service/php-fpm/run
 
 COPY www.conf /etc/php5/fpm/pool.d/
+
+VOLUME /var/www
+
 # Test the Configuration
 RUN /etc/service/php-fpm/run -t 2>&1
 
