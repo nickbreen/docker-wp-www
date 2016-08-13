@@ -28,11 +28,9 @@ COPY run /etc/service/php-fpm/run
 
 COPY www.conf /etc/php/7.0/fpm/pool.d/
 
-VOLUME /var/www
-
-RUN php-fpm7.0 -h
-
 # Test the Configuration
-RUN /etc/service/php-fpm/run -t 2>&1
+RUN mkdir -p /var/www && /etc/service/php-fpm/run -t 2>&1 && rm -rf /var/www
 
 EXPOSE 9000
+
+ENV DOCROOT=/var/www
