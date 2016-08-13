@@ -1,7 +1,7 @@
 version: '2'
 services:
     apache:
-      image: nickbreen/wp-php:apache
+      image: nickbreen/wp-php:apache-v2.0.0
       build:
           context: apache
       ports:
@@ -15,7 +15,7 @@ services:
           @hourly www-data /usr/bin/htcacheclean -p /var/cache/apache2/mod_cache_disk -n -v -t -l 64M | logger
 
     fpm:
-      image: nickbreen/wp-php:fpm
+      image: nickbreen/wp-php:fpm-v2.0.0
       build:
           context: fpm
       volumes:
