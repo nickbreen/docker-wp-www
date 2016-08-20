@@ -1,4 +1,4 @@
-FROM nickbreen/wp-php:v1.3.1
+FROM nickbreen/wp-php:v1.3.2
 
 MAINTAINER Nick Breen <nick@foobar.net.nz>
 
@@ -12,7 +12,7 @@ COPY run /etc/service/php-fpm/run
 COPY www.conf /etc/php/7.0/fpm/pool.d/
 
 # Enable for FPM
-RUN phpenmod newrelic-local newrelic curl gd imagick json mysqli oauth opcache
+RUN phpenmod curl gd imagick json logging mysqli newrelic oauth opcache
 
 ENV DOCROOT=/var/www
 
