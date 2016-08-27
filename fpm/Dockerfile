@@ -12,7 +12,7 @@ COPY run /etc/service/php-fpm/run
 COPY www.conf /etc/php/7.0/fpm/pool.d/
 
 # Enable for FPM
-RUN phpenmod curl gd imagick json logging mysqli newrelic oauth opcache
+RUN phpenmod curl gd imagick json logging mysqli oauth opcache && phpdismod newrelic
 
 ENV DOCROOT=/var/www
 
