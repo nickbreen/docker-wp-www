@@ -12,7 +12,13 @@ services:
         - ./www:/var/www
       environment:
         CRON_D_HTCACHECLEAN: |
-          @hourly www-data /usr/bin/htcacheclean -p /var/cache/apache2/mod_cache_disk -n -v -t -l 64M | logger
+          @hourly www-data /usr/bin/htcacheclean -p /var/cache/apache2/mod_cache_disk -n -v -t -l 64M 2>&1 | logger
+          @reboot root bash /etc/container_environment/CMD_HTPASSWD 2>&1 | logger
+        # AUTH_USER: stats
+        AUTH_PASSWD: password
+        CMD_HTPASSWD: |
+          source /etc/container_environment.sh
+          /usr/bin/htpasswd -bc /etc/htpasswd $${AUTH_USER:-stats} $${AUTH_PASSWD:-stats}
 
     fpm:
       image: nickbreen/wp-php:fpm-v2.0.0
