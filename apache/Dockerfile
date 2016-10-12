@@ -16,15 +16,16 @@ COPY run /etc/service/apache/run
 RUN sed -i /HTCACHECLEAN_MODE/s/daemon/cron/ /etc/default/apache-htcacheclean
 
 COPY log.conf /etc/apache2/conf-available/log.conf
-COPY proxy.conf /etc/apache2/sites-available/001-proxy.conf
-COPY cache.conf /etc/apache2/sites-available/002-cache.conf
-COPY php-fpm.conf /etc/apache2/sites-available/003-php-fpm.conf
+#COPY proxy.conf /etc/apache2/sites-available/001-proxy.conf
+#COPY cache.conf /etc/apache2/sites-available/002-cache.conf
+#COPY php-fpm.conf /etc/apache2/sites-available/003-php-fpm.conf
+COPY default.conf /etc/apache2/sites-available/000-default.conf
 
 RUN a2enconf log \
   && a2disconf other-vhosts-access-log \
-  && a2enmod cache_disk dir expires headers setenvif proxy_http proxy_fcgi rewrite\
-  && a2ensite 001-proxy 002-cache 003-php-fpm \
-  && a2dissite 000-default
+  && a2enmod cache_disk dir expires headers setenvif proxy_http proxy_fcgi rewrite #\
+#  && a2ensite 001-proxy 002-cache 003-php-fpm \
+#  && a2dissite 000-default
 
 RUN /etc/service/apache/run -t 2>&1
 
