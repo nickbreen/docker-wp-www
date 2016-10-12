@@ -1,7 +1,7 @@
 version: '2'
 services:
     apache:
-      image: nickbreen/wp-php:apache-v2.0.0
+      image: nickbreen/wp-php:apache-v2.2.0
       build:
           context: apache
       ports:
@@ -21,7 +21,7 @@ services:
           /usr/bin/htpasswd -bc /etc/htpasswd $${AUTH_USER:-stats} $${AUTH_PASSWD:-stats}
 
     fpm:
-      image: nickbreen/wp-php:fpm-v2.0.0
+      image: nickbreen/wp-php:fpm-v2.2.0
       build:
           context: fpm
       volumes:
