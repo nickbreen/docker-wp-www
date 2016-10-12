@@ -22,7 +22,7 @@ COPY php-fpm.conf /etc/apache2/sites-available/003-php-fpm.conf
 
 RUN a2enconf log \
   && a2disconf other-vhosts-access-log \
-  && a2enmod cache_disk dir expires headers setenvif proxy_http proxy_fcgi \
+  && a2enmod cache_disk dir expires headers setenvif proxy_http proxy_fcgi rewrite\
   && a2ensite 001-proxy 002-cache 003-php-fpm \
   && a2dissite 000-default
 
