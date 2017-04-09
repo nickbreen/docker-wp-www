@@ -1,7 +1,7 @@
 version: '2'
 services:
     apache:
-      image: nickbreen/wp-php:apache-v2.2.0
+      image: nickbreen/wp-php:apache-v2.3.0
       build:
           context: apache
       ports:

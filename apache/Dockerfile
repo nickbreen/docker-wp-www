@@ -20,7 +20,7 @@ COPY default.conf /etc/apache2/sites-available/000-default.conf
 
 RUN a2enconf log \
   && a2disconf other-vhosts-access-log \
-  && a2enmod cache_disk dir expires headers setenvif proxy_http proxy_fcgi rewrite
+  && a2enmod cache cache_disk cache_socache socache_memcache dir expires headers setenvif proxy_http proxy_fcgi rewrite
 
 RUN /etc/service/apache/run -t 2>&1
 
