@@ -13,4 +13,6 @@ foreach (['REQUEST_URI','PATH_INFO'] as $i) {
     user_error($i.": ".$_SERVER[$i]);
 }
 
+echo date('r', time()).PHP_EOL;
+
 echo (substr($_SERVER['REQUEST_URI'], 0, strlen($_SERVER['DOCUMENT_ROOT'])) === $_SERVER['DOCUMENT_ROOT'] ? "Fail" : "Pass!").PHP_EOL;

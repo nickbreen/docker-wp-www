@@ -2,7 +2,8 @@ version: '2'
 services:
 
     memcache:
-      image: memcached:alpine
+      image: memcached
+      command: memcached -m 256 -vvv
       ports:
         - 11211:11211
 
@@ -14,7 +15,7 @@ services:
         - "80:80"
       links:
         - fpm:fastcgi
-        - memcache
+        - memcache:memcache
       volumes:
         - ./www:/var/www
       environment:
