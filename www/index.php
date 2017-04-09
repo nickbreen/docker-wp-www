@@ -1,4 +1,8 @@
 <?php
+ob_start(function ($buff, $phase) {
+    header(sprintf("Content-Length: %d", ob_get_length()));
+    return $buff;
+});
 
 if ('https' == @$_SERVER['HTTP_X_FORWARDED_PROTO']) {
     $_SERVER['HTTPS'] = 'on';
