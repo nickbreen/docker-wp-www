@@ -1,5 +1,11 @@
 version: '2'
 services:
+
+    memcache:
+      image: memcached:alpine
+      ports:
+        - 11211:11211
+
     apache:
       image: nickbreen/wp-php:apache-v2.3.0
       build:
@@ -8,6 +14,7 @@ services:
         - "80:80"
       links:
         - fpm:fastcgi
+        - memcache
       volumes:
         - ./www:/var/www
       environment:
@@ -22,8 +29,11 @@ services:
           /usr/bin/htpasswd -bc /etc/htpasswd $${AUTH_USER:-stats} $${AUTH_PASSWD:-stats}
 
     fpm:
-      image: nickbreen/wp-php:fpm-v2.2.0
+      image: nickbreen/wp-php:fpm-v2.3.0
       build:
           context: fpm
       volumes:
         - ./www:/var/www
+      links:
+        - memcache
+
