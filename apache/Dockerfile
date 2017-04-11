@@ -12,9 +12,6 @@ RUN apt-get update -qqy \
 RUN mkdir /etc/service/apache/
 COPY run /etc/service/apache/run
 
-# Enable the cron based htcache cleanup
-RUN sed -i /HTCACHECLEAN_MODE/s/daemon/cron/ /etc/default/apache-htcacheclean
-
 COPY log.conf /etc/apache2/conf-available/log.conf
 COPY default.conf /etc/apache2/sites-available/000-default.conf
 
