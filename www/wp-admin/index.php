@@ -1,6 +1,7 @@
 <?php
 ob_start(function ($buff, $phase) {
-    // header(sprintf("Content-Length: %d", ob_get_length()));
+    header(sprintf("Content-Length: %d", ob_get_length()));
+    return $buff;
 });
 session_start();
 

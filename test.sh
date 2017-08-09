@@ -1,15 +1,18 @@
 #!/bin/bash -x
 
+set -e
+
 cache() {
-    memcdump --servers=localhost:11211 --debug
+    memcdump --servers=localhost:11211 --debug || true
     docker-compose exec apache htcacheclean -A -p /var/cache/apache2/mod_cache_disk
 }
 
 request() {
-    curl -v -u stats:password localhost/{status-apache?auto,status-fpm,ping-fpm}
-    curl -c cookie.jar -b cookie.jar -v localhost/{LICENSE,test-php,test.txt,wp-admin/,wp-admin/,wp-admin/fake,index.php,index.1.php,test.js,}
+    curl -f -v -u stats:password localhost/{status-apache?auto,status-fpm,ping-fpm}
+    curl -f -c cookie.jar -b cookie.jar -v localhost/{LICENSE,test-php,test.txt,wp-admin/,wp-admin/,wp-admin/fake,index.php,index.1.php,test.js,}
     cat cookie.jar
 }
 
 cache; request; request; cache
 
+curl -f -v -c cookie.jar -b cookie.jar localhost/wp-admin{,/} | wc -c
