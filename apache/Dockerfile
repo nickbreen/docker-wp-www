@@ -1,19 +1,18 @@
-FROM nickbreen/cron:v2.0.1
+FROM phusion/baseimage:0.10.1
 
-MAINTAINER Nick Breen <nick@foobar.net.nz>
+LABEL maintainer="nick@foobar.net.nz"
 
 RUN apt-get update -qqy \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -qqy \
-      apache2 \
-      apache2-utils \
-    && apt-get clean -qqy
+  && DEBIAN_FRONTEND=noninteractive apt-get install -qqy \
+  apache2 \
+  apache2-utils \
+  && apt-get clean -qqy
 
 # Configure a service entry for Apache
 RUN mkdir /etc/service/apache/
 COPY run /etc/service/apache/run
 
 COPY log.conf /etc/apache2/conf-available/log.conf
-COPY default.conf /etc/apache2/sites-available/000-default.conf
 
 RUN a2enconf log \
   && a2disconf other-vhosts-access-log \
