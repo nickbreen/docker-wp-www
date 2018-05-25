@@ -7,9 +7,13 @@ RUN apt-get update -qqy \
     php-fpm \
     php-curl \
     php-gd \
+    php-http \
     php-imagick \
+    php-json \
     php-log \
+    php-mbstring \
     php-memcache \
+    php-mysql \
     php-mysqli \
     php-oauth \
     && apt-get clean -qqy
