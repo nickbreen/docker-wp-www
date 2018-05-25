@@ -1,14 +1,15 @@
-version: '2'
-services:
+version: '3.5'
 
+volumes:
+  www:
+
+services:
     memcache:
       image: memcached
       command: memcached -m 256 -vv
-      ports:
-        - 11211:11211
 
     apache:
-      image: nickbreen/wp-www:apache-v2.3.3
+      image: nickbreen/wp-www:apache-v3.0.0
       build:
           context: apache
       ports:
@@ -17,25 +18,15 @@ services:
         - fpm:fastcgi
         - memcache:memcache
       volumes:
-        - ./www:/var/www
-      environment:
-        DEBUG: "yes"
-        CRON_D_HTCACHECLEAN: |
-          @hourly www-data /usr/bin/htcacheclean -p /var/cache/apache2/mod_cache_disk -n -v -t -l 64M 2>&1 | logger
-          @reboot root bash /etc/container_environment/CMD_HTPASSWD 2>&1 | logger
-        # AUTH_USER: stats
-        AUTH_PASSWD: password
-        UPLOADS_REDIR_BASE: http://localhost/spoons
-        CMD_HTPASSWD: |
-          source /etc/container_environment.sh
-          /usr/bin/htpasswd -bc /etc/htpasswd $${AUTH_USER:-stats} $${AUTH_PASSWD:-stats}
+        - www:/var/www
+        - ./default.conf:/etc/apache2/sites-available/000-default.conf:ro
 
     fpm:
-      image: nickbreen/wp-www:fpm-v2.3.3
+      image: nickbreen/wp-www:fpm-v3.0.0
       build:
           context: fpm
       volumes:
-        - ./www:/var/www
+        - www:/var/www
       links:
         - memcache
 

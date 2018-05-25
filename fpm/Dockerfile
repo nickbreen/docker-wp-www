@@ -1,10 +1,18 @@
-FROM nickbreen/wp-php:v1.3.3
+FROM phusion/baseimage:0.10.1
 
-MAINTAINER Nick Breen <nick@foobar.net.nz>
+LABEL maintainer="nick@foobar.net.nz"
 
-RUN apt-get update -y \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -qqy php-fpm php-memcache \
-    && apt-get clean -y
+RUN apt-get update -qqy \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -qqy \
+    php-fpm \
+    php-curl \
+    php-gd \
+    php-imagick \
+    php-log \
+    php-memcache \
+    php-mysqli \
+    php-oauth \
+    && apt-get clean -qqy
 
 # Configure a service entry for Apache
 COPY run /etc/service/php-fpm/run
@@ -12,7 +20,7 @@ COPY run /etc/service/php-fpm/run
 COPY www.conf /etc/php/7.0/fpm/pool.d/
 
 # Enable for FPM
-RUN phpenmod curl gd imagick json logging mysqli oauth opcache memcache && phpdismod newrelic
+RUN phpenmod curl gd imagick json memcache mysqli oauth opcache
 
 ENV DOCROOT=/var/www
 
