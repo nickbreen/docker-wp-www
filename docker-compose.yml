@@ -9,9 +9,9 @@ services:
       command: memcached -m 256 -vv
 
     apache:
-      image: nickbreen/wp-www:apache-v3.0.0
+      image: nickbreen/wp-www:latest
       build:
-          context: apache
+          context: .
       ports:
         - "80:80"
       links:
@@ -22,9 +22,7 @@ services:
         - ./default.conf:/etc/apache2/sites-available/000-default.conf:ro
 
     fpm:
-      image: nickbreen/wp-www:fpm-v3.0.0
-      build:
-          context: fpm
+      image: nickbreen/wp-php:latest
       volumes:
         - www:/var/www
       links:
